@@ -56,8 +56,8 @@ fn password_valid_policy2(ia: usize, ib: usize, expected: &str, password: &str) 
         .next()
         .ok_or_else(|| anyhow::anyhow!("Empty condition"))?;
 
-    let a = password.chars().skip(ia - 1).next();
-    let b = password.chars().skip(ib - 1).next();
+    let a = password.chars().nth(ia - 1);
+    let b = password.chars().nth(ib - 1);
 
     Ok(match (a, b) {
         (Some(a), Some(b)) if a == expected && b == expected => false,
