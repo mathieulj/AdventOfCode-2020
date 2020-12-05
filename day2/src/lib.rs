@@ -59,12 +59,7 @@ fn password_valid_policy2(ia: usize, ib: usize, expected: &str, password: &str) 
     let a = password.chars().nth(ia - 1);
     let b = password.chars().nth(ib - 1);
 
-    Ok(match (a, b) {
-        (Some(a), Some(b)) if a == expected && b == expected => false,
-        (Some(a), ..) if a == expected => true,
-        (.., Some(b)) if b == expected => true,
-        _ => false,
-    })
+    Ok((a == Some(expected)) ^ (b == Some(expected)))
 }
 
 #[cfg(test)]

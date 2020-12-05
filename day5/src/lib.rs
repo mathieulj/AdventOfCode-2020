@@ -21,8 +21,7 @@ pub fn challenge2(input: &str) -> u16 {
 
 pub fn parse_seat_id(line: &str) -> u16 {
     line.chars().fold(0, |acc, c| match c {
-        'B' => (acc << 1) | 1,
-        'R' => (acc << 1) | 1,
+        'B' | 'R' => (acc << 1) | 1,
         _ => acc << 1,
     })
 }
