@@ -51,6 +51,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "day8"
+version = "0.1.0"
+dependencies = [
+ "displaydoc 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)",
+ "regex 1.4.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "thiserror 1.0.22 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
 name = "displaydoc"
 version = "0.1.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
