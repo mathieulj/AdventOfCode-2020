@@ -1,6 +1,6 @@
-use std::{collections::HashSet, convert::TryFrom};
-
 use displaydoc::Display;
+use itertools::Itertools as _;
+use std::{collections::HashSet, str::FromStr};
 use thiserror::Error;
 
 #[derive(Debug, Error, Display)]
@@ -78,10 +78,10 @@ impl ProgramState {
     }
 }
 
-impl TryFrom<&str> for Instruction {
-    type Error = Errors;
+impl FromStr for Instruction {
+    type Err = Errors;
 
-    fn try_from(value: &str) -> Result<Self, Self::Error> {
+    fn from_str(value: &str) -> Result<Self, Self::Err> {
         if value.len() < 5 {
             return Err(Errors::InvalidInstruction(value.to_string()));
         }
@@ -98,10 +98,7 @@ impl TryFrom<&str> for Instruction {
 }
 
 pub fn challenge1(input: &str) -> Result<isize, Errors> {
-    let program = input
-        .lines()
-        .map(Instruction::try_from)
-        .collect::<Result<Vec<Instruction>, Errors>>()?;
+    let program = input.lines().map(str::parse).try_collect()?;
 
     let state = match ProgramState::default().run(&program) {
         Err(Errors::InfiniteLoop(state)) => state,
@@ -113,10 +110,7 @@ pub fn challenge1(input: &str) -> Result<isize, Errors> {
 }
 
 pub fn challenge2(input: &str) -> Result<isize, Errors> {
-    let program = input
-        .lines()
-        .map(Instruction::try_from)
-        .collect::<Result<Vec<Instruction>, Errors>>()?;
+    let program: Vec<Instruction> = input.lines().map(str::parse).try_collect()?;
 
     for (i, op) in program.iter().enumerate() {
         match op {
