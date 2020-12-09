@@ -110,27 +110,20 @@ pub fn challenge1(input: &str) -> Result<isize, Errors> {
 }
 
 pub fn challenge2(input: &str) -> Result<isize, Errors> {
-    let program: Vec<Instruction> = input.lines().map(str::parse).try_collect()?;
+    let mut program: Vec<Instruction> = input.lines().map(str::parse).try_collect()?;
 
-    for (i, op) in program.iter().enumerate() {
-        match op {
-            Instruction::Jump(arg) => {
-                let mut program = program.clone();
-                program[i] = Instruction::NoOp(*arg);
-                if let Ok(state) = ProgramState::default().run(&program) {
-                    return Ok(state.accumulator);
-                }
-            }
-            Instruction::NoOp(arg) => {
-                let mut program = program.clone();
-                program[i] = Instruction::Jump(*arg);
+    for i in 0..program.len() {
+        let flip = match &program[i] {
+            Instruction::Jump(arg) => Instruction::NoOp(*arg),
+            Instruction::NoOp(arg) => Instruction::Jump(*arg),
+            _ => continue,
+        };
 
-                if let Ok(state) = ProgramState::default().run(&program) {
-                    return Ok(state.accumulator);
-                }
-            }
-            _ => {}
+        let previous_op = std::mem::replace(&mut program[i], flip);
+        if let Ok(state) = ProgramState::default().run(&program) {
+            return Ok(state.accumulator);
         }
+        program[i] = previous_op;
     }
 
     return Ok(0);
