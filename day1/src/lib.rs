@@ -1,5 +1,6 @@
-#![feature(bool_to_option)]
+#![allow(unstable_name_collisions)]
 use std::collections::HashSet;
+use utils::BoolExt as _;
 
 pub fn challenge1(input: &str) -> i64 {
     let mut others = HashSet::new();

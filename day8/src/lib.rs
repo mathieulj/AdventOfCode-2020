@@ -113,13 +113,13 @@ pub fn challenge2(input: &str) -> Result<isize, Errors> {
     let mut program: Vec<Instruction> = input.lines().map(str::parse).try_collect()?;
 
     for i in 0..program.len() {
-        let flip = match &program[i] {
+        let compliment_op = match &program[i] {
             Instruction::Jump(arg) => Instruction::NoOp(*arg),
             Instruction::NoOp(arg) => Instruction::Jump(*arg),
             _ => continue,
         };
 
-        let previous_op = std::mem::replace(&mut program[i], flip);
+        let previous_op = std::mem::replace(&mut program[i], compliment_op);
         if let Ok(state) = ProgramState::default().run(&program) {
             return Ok(state.accumulator);
         }
