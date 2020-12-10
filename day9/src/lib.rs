@@ -10,8 +10,6 @@ use utils::BoolExt as _;
 pub enum Errors {
     /// Parse error {0}
     ParseError(#[from] std::num::ParseIntError),
-    /// Bad regex {0}
-    BadRegex(#[from] regex::Error),
     /// No solution was found
     NoSolutionFound,
 }
