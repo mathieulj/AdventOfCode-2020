@@ -2,7 +2,7 @@
 use displaydoc::Display;
 use std::{
     f64::consts::PI,
-    ops::{AddAssign, Mul},
+    ops::{AddAssign, Mul, MulAssign},
 };
 use thiserror::Error;
 
@@ -85,8 +85,8 @@ impl AddAssign<Rotation> for Position {
     }
 }
 
-impl AddAssign<Rotation> for Displacement {
-    fn add_assign(&mut self, rhs: Rotation) {
+impl MulAssign<Rotation> for Displacement {
+    fn mul_assign(&mut self, rhs: Rotation) {
         let Displacement { east, north } = self.clone();
         let sin = rhs.0.sin();
         let cos = rhs.0.cos();
@@ -148,8 +148,8 @@ pub fn challenge2(input: &str) -> Result<f64, Errors> {
         let magnitude = line[1..].parse()?;
 
         match &line[0..1] {
-            "R" => waypoint += Rotation::from_deg(magnitude),
-            "L" => waypoint += Rotation::from_deg(-magnitude),
+            "R" => waypoint *= Rotation::from_deg(magnitude),
+            "L" => waypoint *= Rotation::from_deg(-magnitude),
             "N" => waypoint += Displacement::north(magnitude),
             "S" => waypoint += Displacement::south(magnitude),
             "E" => waypoint += Displacement::east(magnitude),
