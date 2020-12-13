@@ -71,7 +71,7 @@ pub fn challenge2(input: &str) -> Result<i64, Errors> {
                 .next()
                 .unwrap();
 
-            // `other_mods * inv % modulus == 1` so multiplying by our remainder carry it into the result
+            // `other_mods * inv % modulus == 1` so multiplying by our remainder carries it into the result
             remainder * other_mods * inv
         })
         .sum();
