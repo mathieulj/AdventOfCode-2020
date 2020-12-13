@@ -65,11 +65,13 @@ pub fn challenge2(input: &str) -> Result<i64, Errors> {
             // Find a factor that will hide this contribution from the other modulus
             let other_mods = product / modulus;
 
-            // Find a factor that will make the preceding modulo to one for this modulus
-            let n = other_mods % modulus;
-            let inv = (1..).filter(|i| i * n % modulus == 1).next().unwrap();
+            // Find a factor that will produce a remainder of 1 with this modulus `other_mods * inv % modulus == 1`
+            let inv = (1..)
+                .filter(|i| i * other_mods % modulus == 1)
+                .next()
+                .unwrap();
 
-            // other_mods * inv % modulus == 1 so multiplying by our remainder will make it match the result
+            // `other_mods * inv % modulus == 1` so multiplying by our remainder carry it into the result
             remainder * other_mods * inv
         })
         .sum();
