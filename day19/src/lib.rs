@@ -38,32 +38,30 @@ fn valid_remainders<'s, 'r>(
     message: &'s str,
     rule: &Vec<RuleSegment<'s>>,
     rules: &'r HashMap<u32, Vec<Vec<RuleSegment<'s>>>>,
-) -> Box<dyn Iterator<Item = &'s str> + 'r> {
-    let mut remainders = vec![message];
-    for segment in rule {
-        remainders = remainders
-            .into_iter()
-            .flat_map(|remainder| match segment {
-                RuleSegment::Literal(l) => {
+) -> Vec<&'s str> {
+    rule.iter()
+        .fold(vec![message], |remainders, segment| match segment {
+            RuleSegment::Literal(l) => remainders
+                .into_iter()
+                .filter_map(|remainder| {
                     if remainder.len() >= l.len() && *l == &remainder[..l.len()] {
-                        Box::new(std::iter::once(&remainder[l.len()..]))
-                            as Box<dyn Iterator<Item = &'s str> + 'r>
+                        Some(&remainder[l.len()..])
                     } else {
-                        Box::new(std::iter::empty())
+                        None
                     }
-                }
-                RuleSegment::Reference(r) => Box::new(
-                    rules
-                        .get(r)
-                        .into_iter()
-                        .flat_map(|options| options.iter())
-                        .flat_map(move |rule| valid_remainders(remainder, rule, rules)),
-                ),
-            })
-            .collect();
-    }
-
-    Box::new(remainders.into_iter())
+                })
+                .collect(),
+            RuleSegment::Reference(r) => rules
+                .get(r)
+                .into_iter()
+                .flat_map(|options| options.iter())
+                .flat_map(|rule| {
+                    remainders.iter().flat_map(move |remainder| {
+                        valid_remainders(remainder, rule, rules).into_iter()
+                    })
+                })
+                .collect(),
+        })
 }
 
 pub fn challenge1(input: &str) -> Result<usize> {
@@ -99,7 +97,9 @@ pub fn challenge1(input: &str) -> Result<usize> {
     Ok(messages
         .lines()
         .filter(|message| {
-            valid_remainders(message, &rules[&0][0], &rules).any(|remainder| remainder == "")
+            valid_remainders(message, &rules[&0][0], &rules)
+                .into_iter()
+                .any(|remainder| remainder == "")
         })
         .count())
 }
